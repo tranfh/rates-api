@@ -34,7 +34,7 @@ class RatesRepository:
             if (
                 day_of_week in rate.days_of_week
                 and rate.period.start <= interval.start <= rate.period.end
-                and rate.period.start <= interval.end <= rate.period.end
+                and rate.period.start <= interval.end
                 and get_timezone_offset(rate.timezone) == timezone
             ):
                 rates.append(rate)

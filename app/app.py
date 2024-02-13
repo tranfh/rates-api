@@ -15,7 +15,7 @@ price_service = PriceService(rates_repository=rate_repository)
 rate_service = RatesService(rates_repository=rate_repository)
 
 # Set up logging
-application.logger.setLevel(logging.INFO)
+application.logger.setLevel(logging.DEBUG)
 
 
 @application.route('/')
@@ -90,7 +90,12 @@ def rates():
         application.logger.warning("Overwriting existing rates with new rates...")
         try:
             # Convert rates to model objects using map
-            rates_input = [Rate.to_model(rate) for rate in request.json.get('rates', [])]
+            if isinstance(request.json, str):
+                request_dict = json.loads(request.json)
+            else:
+                request_dict = request.json
+
+            rates_input = [Rate.to_model(rate) for rate in request_dict.get('rates', [])]
 
             # Update rates and convert them back to model objects using map
             rates_list = rate_service.update_rates(rates_input)
@@ -144,7 +149,10 @@ def prices():
     except ValueError as e:
         application.logger.error("Error fetching prices:", e)
         return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        application.logger.error("Error fetching prices:", e)
+        return jsonify({'error': str(e)}), 400
 
 
 if __name__ == '__main__':
-    application.run(port=5000)
+    application.run(port=5000, debug=True)

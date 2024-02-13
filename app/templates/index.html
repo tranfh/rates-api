@@ -8,131 +8,341 @@
         body {
             font-family: sans-serif;
             background-color: #f0f0f0;
-            padding: 20px;
             text-align: center;
         }
 
-        h1, h2, h3 {
-            color: #333;
+        .text-left {
+            text-align: start;
         }
 
-        p {
-            color: #666;
-            margin-bottom: 20px;
+        .hstack {
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
         }
 
-        .container {
+        .vstack {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            justify-content: start;
         }
 
-
-        .endpoint {
-            margin-bottom: 20px;
+        .border-box {
             border: 1px solid #ccc;
             border-radius: 5px;
             padding: 10px;
-            max-width: 800px;
-            width: 100%;
-            text-align: start;
         }
 
-        .endpoint-container {
+        .button {
+            height: 2rem;
+            color: black;
+            background-color: #c4bebe;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            flex: 1;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            padding: 3px;
         }
 
-        .inner-endpoint {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            padding:10px;
+        .url-input {
+            width: 80%;
+            height: 2rem;
+            font-size: 16px;
+        }
+
+        #resultContainer {
             border-radius: 5px;
-            max-width: 700px;
+            border: 1px solid #ccc;
             width: 100%;
-            text-align: start;
+            flex: 1;
+            padding: 10px;
+            height: 100%;
+            overflow-x: auto; /* Add horizontal scroll if content overflows */
+            white-space: pre-wrap; /* Wrap long lines */
         }
 
-        .endpoint h3 {
-            margin-top: 0;
+        .left-container {
+            overflow: scroll;
+            max-width: 50%;
+        }
+
+        .right-container {
+            flex: 1;
+            overflow: scroll;
+            max-width: 50%;
+        }
+
+        .dropbtn {
+            background-color: #b1b1aa;
+            color: white;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #f1f1f1
+        }
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .dropbtn {
+            background-color: #858582;
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlInput = document.getElementById('urlInput');
+            const submitButton = document.getElementById('submitButton');
+            const resultContainer = document.getElementById('resultContainer');
+            const requestBody = document.getElementById('requestBody');
+            const dropdownBtn = document.querySelector('.dropbtn');
+            const dropdownContent = document.querySelector('.dropdown-content');
+
+            // Handle dropdown item click
+            dropdownContent.addEventListener('click', function (event) {
+                if (event.target.tagName === 'A') {
+                    event.preventDefault();
+                    dropdownBtn.textContent = event.target.textContent;
+                }
+            });
+
+            submitButton.addEventListener('click', async function () {
+                const url = urlInput.value;
+                const method = dropdownBtn.textContent;
+                let options = {
+                    method: method
+                };
+
+                // Add request body if present
+                if (requestBody.value && method !== 'GET') {
+                    options.body = JSON.stringify(requestBody.value);
+                    options.headers = {'Content-Type': 'application/json'};
+                }
+
+                // Make API request
+                try {
+                    // Make API request
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        throw new Error(response.status + ' ' + response.statusText + ' ' + response.url + '\n' + await response.text());
+                    }
+
+                    const data = await response.json();
+                    const jsonString = JSON.stringify(data, null, 2);
+                    resultContainer.innerHTML = `<pre>${jsonString}</pre>`;
+                } catch (error) {
+                    // Get response text from error
+                    resultContainer.innerHTML = `<pre>Error: ${error.message}</pre>`;
+                }
+            });
+        });
+    </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Rates API with Flask</h1>
+<div class="vstack">
+    <h1>Rates API with Flask</h1>
+    <div class="hstack">
+        <div class="vstack left-container text-left">
+            <div class="vstack text-left border-box">
+                <h2>Description</h2>
+                <p>This app is a simple Flask API that provides endpoints to retrieve and update rates. It also provides
+                    an endpoint to retrieve the price for a specific time range.</p>
 
-        <div class="endpoint">
-            <h2>Description</h2>
-            <p>This app is a simple Flask API that provides endpoints to retrieve and update rates. It also provides an endpoint to retrieve the price for a specific time range.</p>
-        </div>
+                <p>This folder structure has been divided into app and libs folders.</p>
 
-        <div class="endpoint">
-            <h2>Installation</h2>
-            <p>To install the required dependencies, run the following command:</p>
-            <code>pip install -r requirements.txt</code>
-        </div>
+                <p>The app folder contains the main application code, while the libs folder contains the helper
+                    functions and classes.</p>
 
-        <div class="endpoint">
-            <h2>Usage</h2>
-            <p>To run the app locally, execute the following command:</p>
-            <pre><code>cd RatesApi<br>python -m app.app</code></pre>
-        </div>
+                <p>The purpose of this structure is to ensure that the code is modular and easy to maintain.</p>
 
-        <div class="endpoint endpoint-container">
-            <h2>API Endpoints</h2>
+                <p>Code within the `app` folder is responsible for handling the API requests and responses.</p>
 
-            <div class="inner-endpoint">
-                <h3>1. Home</h3>
-                <p><strong>URL:</strong> /</p>
-                <p><strong>Method:</strong> GET</p>
-                <p><strong>Description:</strong> Displays a simple greeting message.</p>
-                <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a></p>
+                <p>Code within the `libs` folder is responsible for handling the business logic.</p>
+
+                <p>Within the `libs` folder there are two sub-folders:
+                    <br>- rates: Contains the code to handle the rates data
+                    <br>- dto: Contains the code to handle the data models
+                    <br>- services: Contains the code to handle the business logic
+                    <br>- repository: Contains the code to handle database interactions
+                    <br>- utils: Contains the code to handle any helper functions
+                </p>
             </div>
 
-            <div class="inner-endpoint">
-                <h3>2. Get Rates</h3>
-                <p><strong>URL:</strong> /rates</p>
-                <p><strong>Method:</strong> GET</p>
-                <p><strong>Description:</strong> Retrieves a list of rates.</p>
-                <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/rates">http://127.0.0.1:5000/rates</a></p>
+            <div class="vstack text-left border-box">
+                <h2>Installation</h2>
+                <p>Open up a directory in which you would like to clone the repository and run the following
+                    command:</p>
+                <code>git clone git@github.com:tranfh/rates-api.git</code>
+
+                <p>Download and install Python 3.8 or higher from the [official
+                    website](https://www.python.org/downloads/).</p>
+                <p>Manage your Python virtual environments with [venv](https://docs.python.org/3/library/venv.html).</p>
+                <p>Install the required packages by running the following command:</p>
+                <code>pip install -r requirements.txt</code>
+
+                <p>Navigate to the `RatesApi` directory and create a virtual environment by running the following
+                    command:
+                </p>
+                <code>python -m venv venv</code>
+                <p>Activate the virtual environment by running the following command:</p>
+                <code>source venv/bin/activate</code>
+                <p>Install the required packages by running the following command:</p>
+                <code>pip install -r requirements.txt</code>
+
             </div>
 
-            <div class="inner-endpoint">
-                <h3>3. Update Rates</h3>
-                <p><strong>URL:</strong> /rates</p>
-                <p><strong>Method:</strong> PUT</p>
-                <p><strong>Description:</strong> Updates the rates with new data.</p>
-                <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/rates">http://127.0.0.1:5000/rates</a></p>
+            <div class="vstack text-left border-box">
+                <h2>Usage</h2>
+                <p>To run the app locally, execute the following command:</p>
+                <code>cd RatesApi<br>python -m app.app</code>
             </div>
 
-            <div class="inner-endpoint">
-                <h3>4. Get Prices</h3>
-                <p><strong>URL:</strong> /prices</p>
-                <p><strong>Method:</strong> GET</p>
-                <p><strong>Description:</strong> Retrieves the price for a specific time range.</p>
-                <p><strong>Parameters:</strong></p>
-                <ul>
-                    <li><strong>start:</strong> Start date and time (ISO 8601 format)</li>
-                    <li><strong>end:</strong> End date and time (ISO 8601 format)</li>
-                </ul>
-                <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00">http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00</a></p>
+            <div class="vstack text-left border-box">
+                <h2>API Endpoints</h2>
+
+                <div class="inner-endpoint">
+                    <h3>1. Home</h3>
+                    <p><strong>URL:</strong> /</p>
+                    <p><strong>Method:</strong> GET</p>
+                    <p><strong>Description:</strong> Displays a simple greeting message.</p>
+                    <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a></p>
+                </div>
+
+                <div class="inner-endpoint">
+                    <h3>2. Get Rates</h3>
+                    <p><strong>URL:</strong> /rates</p>
+                    <p><strong>Method:</strong> GET</p>
+                    <p><strong>Description:</strong> Retrieves a list of rates.</p>
+                    <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/rates">http://127.0.0.1:5000/rates</a>
+                    </p>
+                </div>
+
+                <div class="inner-endpoint">
+                    <h3>3. Update Rates</h3>
+                    <p><strong>URL:</strong> /rates</p>
+                    <p><strong>Method:</strong> PUT</p>
+                    <p><strong>Description:</strong> Updates the rates with new data.</p>
+                    <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/rates">http://127.0.0.1:5000/rates</a>
+                    </p>
+                    <p><strong>Example Request Body: </strong></p>
+                    <code>
+                        {
+                        "rates": [
+                        {
+                        "days": "mon,tues,thurs",
+                        "times": "0900-2100",
+                        "tz": "America/Chicago",
+                        "price": 1400
+                        },
+                        {
+                        "days": "fri,sat,sun",
+                        "times": "0900-2100",
+                        "tz": "America/Toronto",
+                        "price": 2000
+                        },
+                        {
+                        "days": "wed",
+                        "times": "0600-1800",
+                        "tz": "America/Chicago",
+                        "price": 1750
+                        },
+                        {
+                        "days": "mon,wed,sat",
+                        "times": "0100-0500",
+                        "tz": "America/Chicago",
+                        "price": 1000
+                        },
+                        {
+                        "days": "sun,tues",
+                        "times": "0100-0700",
+                        "tz": "America/Toronto",
+                        "price": 925
+                        }
+                        ]
+                        }
+                    </code>
+                </div>
+
+                <div class="inner-endpoint">
+                    <h3>4. Get Prices</h3>
+                    <p><strong>URL:</strong> /prices</p>
+                    <p><strong>Method:</strong> GET</p>
+                    <p><strong>Description:</strong> Retrieves the price for a specific time range.</p>
+                    <p><strong>Parameters:</strong></p>
+                    <ul>
+                        <li><strong>start:</strong> Start date and time (ISO 8601 format)</li>
+                        <li><strong>end:</strong> End date and time (ISO 8601 format)</li>
+                    </ul>
+                    <p><strong>Example:</strong> <a
+                            href="http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00">http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="vstack text-left border-box">
+                <h2>Testing</h2>
+                <p>To run the tests, execute the following command:</p>
+                <code>
+                    cd RatesApi
+                    <br>
+                    python -m pytest
+                </code>
             </div>
         </div>
-
-        <div class="endpoint">
-            <h2>Testing</h2>
-            <p>To run the tests, execute the following command:</p>
-            <code>
-                cd RatesApi
-            <br>
-                python -m pytest
-            </code>
+        <div class="vstack right-container">
+            <div class="hstack">
+                <div class="dropdown">
+                    <button class="dropbtn">GET</button>
+                    <div class="dropdown-content">
+                        <a href="#">GET</a>
+                        <a href="#">PUT</a>
+                        <a href="#">POST</a>
+                    </div>
+                </div>
+                <input type="text" class="url-input" id="urlInput" placeholder="Enter URL...">
+                <div class="button" id="submitButton">Submit</div>
+            </div>
+            <div class="vstack">
+                <textarea type="text" id="requestBody" placeholder="Request Body"></textarea>
+            </div>
+            <div id="resultContainer" class="text-left"></div>
         </div>
     </div>
+</div>
 </body>
 </html>
