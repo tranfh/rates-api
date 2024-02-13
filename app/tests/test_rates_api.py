@@ -189,7 +189,7 @@ def test_prices_equal_to_0_if_null(mock_get_price, test_client):
                     }
                 ]
             },
-            "Times is required. Must be in format 'HHMM-HHMM'"
+            "Invalid value for 'times'. Must be in format 'HHMM-HHMM'"
         ),
         (
             {
@@ -209,13 +209,25 @@ def test_prices_equal_to_0_if_null(mock_get_price, test_client):
                     'rates': [
                         {
                             'days': 'mon',
+                            'tz': 'America/Chicago',
+                            'price': 1500
+                        }
+                    ]
+                },
+                "Times is required"
+        ),
+        (
+                {
+                    'rates': [
+                        {
+                            'days': 'mon',
                             'times': '0900-1200',
                             'tz': '',
                             'price': 1500
                         }
                     ]
                 },
-                "Timezone is required"
+                "Invalid value for 'tz'. Must be a string and a valid timezone"
         ),
         (
                 {
@@ -229,6 +241,18 @@ def test_prices_equal_to_0_if_null(mock_get_price, test_client):
                     ]
                 },
                 "Invalid value for 'tz'. Must be a string and a valid timezone"
+        ),
+        (
+                {
+                    'rates': [
+                        {
+                            'days': 'mon',
+                            'times': '0900-1200',
+                            'price': 1500
+                        }
+                    ]
+                },
+                "Tz is required"
         ),
         (
                 {
@@ -267,7 +291,33 @@ def test_prices_equal_to_0_if_null(mock_get_price, test_client):
                         }
                     ]
                 },
+                "Invalid value for 'price'. Must be an integer"
+        ),
+        (
+                {
+                    'rates': [
+                        {
+                            'days': 'mon',
+                            'times': '0900-1200',
+                            'tz': 'America/Toronto',
+                        }
+                    ]
+                },
                 "Price is required"
+        ),
+        (
+                {
+                    'rates': [
+                        {
+                            'days': 'mon',
+                            'times': '0900-1200',
+                            'tz': 'America/Toronto',
+                            "price": 12,
+                            "extra": "extra"
+                        }
+                    ]
+                },
+                "Unknown properties: extra"
         )
     ]
 )

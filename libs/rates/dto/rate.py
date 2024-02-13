@@ -59,23 +59,31 @@ class Rate:
         Returns:
         None
         """
-        if not rate.get('days'):
-            raise Exception("Days of week are required")
-        if not rate.get('times'):
-            raise Exception("Times is required. Must be in format 'HHMM-HHMM'")
-        if not rate.get('tz'):
-            raise Exception("Timezone is required")
-        if not rate.get('price'):
-            raise Exception("Price is required")
+        # Check for required fields
+        required_fields = ['days', 'times', 'tz', 'price']
+        for field in required_fields:
+            if field not in rate:
+                raise ValueError(f"{field.capitalize()} is required")
 
+        # Check for unknown fields
+        unknown_properties = set(rate.keys()) - set(required_fields)
+        if unknown_properties:
+            raise ValueError(f"Unknown properties: {', '.join(unknown_properties)}")
+
+        # Validate days
         valid_days = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"]
+        if not rate.get("days"):
+            raise ValueError("Days of week are required")
+
         days = rate.get("days").replace(" ", "").split(",")
         if not all(day in valid_days for day in days):
             raise ValueError("Invalid value for 'days'")
 
+        # Validate price
         if not isinstance(rate.get("price"), int):
             raise Exception("Invalid value for 'price'. Must be an integer")
 
+        # Validate times
         times = rate.get("times")
         if len(times) != 9 or not times[4] == "-":
             raise Exception("Invalid value for 'times'. Must be in format 'HHMM-HHMM'")
@@ -83,6 +91,7 @@ class Rate:
         if len(times) != 2 or not all(time.isdigit() and len(time) == 4 for time in times):
             raise Exception("Invalid value for 'times'. Must be in format 'HHMM-HHMM'")
 
+        # Validate timezone
         timezone = rate.get("tz")
         if not timezone or not isinstance(timezone, str):
             raise Exception("Invalid value for 'tz'. Must be a string and a valid timezone")
