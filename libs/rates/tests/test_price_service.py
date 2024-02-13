@@ -57,14 +57,13 @@ def test_get_price_with_invalid_interval_input(price_service):
 
 
 def test_get_price_empty_result(price_service):
-    # Mock data
+    # Prepare
     start = datetime(2024, 2, 12, 10, 0)
     end = datetime(2024, 2, 12, 12, 0)
 
-    # Set up repository to return empty list
     rates_repository.find_rate.return_value = []
 
-    # Call get_price
+    # Run
     price = price_service.get_price(start, end)
 
     # Expect

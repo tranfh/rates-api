@@ -48,10 +48,10 @@ def test_find_rate(rates_repository):
 
     rates_repository.update_rates([rate_1, rate_2])
 
-    # Execute
+    # Run
     found_rates = rates_repository.find_rate(day_of_week, interval, get_timezone_offset(timezone))
 
-    # Assert
+    # Expect
     assert found_rates == [rate_1]
 
 
@@ -66,10 +66,10 @@ def test_find_rate_is_none_if_start_if_eq_end_of_rate_interval(rates_repository)
 
     rates_repository.update_rates([rate_1, rate_2])
 
-    # Execute
+    # Run
     found_rates = rates_repository.find_rate(day_of_week, interval, get_timezone_offset(timezone))
 
-    # Assert
+    # Expect
     assert found_rates == []
 
 
@@ -84,10 +84,10 @@ def test_find_no_matching_timezone_rate(rates_repository):
 
     rates_repository.update_rates([rate_1, rate_2])
 
-    # Execute
+    # Run
     found_rates = rates_repository.find_rate(day_of_week, interval, get_timezone_offset(timezone))
 
-    # Assert
+    # Expect
     assert found_rates == []
 
 
@@ -102,8 +102,8 @@ def test_find_multiple_rates(rates_repository):
 
     rates_repository.update_rates([rate_1, rate_2])
 
-    # Execute
+    # Run
     found_rates = rates_repository.find_rate(day_of_week, interval, get_timezone_offset(timezone))
 
-    # Assert
+    # Expect
     assert found_rates == [rate_1, rate_2]

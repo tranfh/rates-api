@@ -63,13 +63,10 @@ def test_put_rates(mock_update_rates, test_client):
     mock_update_rates.assert_called()
     expect_service_input = list(map(lambda rate: Rate.to_model(rate), input_data.get('rates')))
 
-    # Extract arguments passed to update_rates method
     actual_args, _ = mock_update_rates.call_args
 
-    # Convert arguments to Rate objects
     actual_rates = actual_args[0]
 
-    # Check for deep equality of the lists
     assert len(actual_rates) == len(expect_service_input)
     for actual_rate, expected_rate in zip(actual_rates, expect_service_input):
         assert actual_rate.days_of_week == expected_rate.days_of_week
@@ -105,13 +102,10 @@ def test_put_rates_with_whitespace_in_days(mock_update_rates, test_client):
     mock_update_rates.assert_called()
     expect_service_input = list(map(lambda rate: Rate.to_model(rate), input_data.get('rates')))
 
-    # Extract arguments passed to update_rates method
     actual_args, _ = mock_update_rates.call_args
 
-    # Convert arguments to Rate objects
     actual_rates = actual_args[0]
 
-    # Check for deep equality of the lists
     assert len(actual_rates) == len(expect_service_input)
     for actual_rate, expected_rate in zip(actual_rates, expect_service_input):
         assert actual_rate.days_of_week == expected_rate.days_of_week
@@ -141,13 +135,10 @@ def test_put_rates_with_duplicate_days(mock_update_rates, test_client):
     mock_update_rates.assert_called()
     expect_service_input = list(map(lambda rate: Rate.to_model(rate), input_data.get('rates')))
 
-    # Extract arguments passed to update_rates method
     actual_args, _ = mock_update_rates.call_args
 
-    # Convert arguments to Rate objects
     actual_rates = actual_args[0]
 
-    # Check for deep equality of the lists
     assert len(actual_rates) == len(expect_service_input)
     for actual_rate, expected_rate in zip(actual_rates, expect_service_input):
         assert actual_rate.days_of_week == expected_rate.days_of_week
