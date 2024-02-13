@@ -121,6 +121,42 @@ def test_put_rates_with_whitespace_in_days(mock_update_rates, test_client):
         assert actual_rate.price == expected_rate.price
 
 
+@patch('libs.rates.rates_service.RatesService.update_rates')
+def test_put_rates_with_duplicate_days(mock_update_rates, test_client):
+    input_data = {
+        'rates': [
+            {
+                'days': ' mon,tues,thurs, mon',
+                'times': '0900-2100',
+                'tz': 'America/Chicago',
+                'price': 1500
+            },
+        ]
+    }
+    response = test_client.put('/rates', json=input_data)
+    assert response.status_code == 200
+    data = response.json
+    assert 'rates' in data
+    assert isinstance(data['rates'], list)
+    mock_update_rates.assert_called()
+    expect_service_input = list(map(lambda rate: Rate.to_model(rate), input_data.get('rates')))
+
+    # Extract arguments passed to update_rates method
+    actual_args, _ = mock_update_rates.call_args
+
+    # Convert arguments to Rate objects
+    actual_rates = actual_args[0]
+
+    # Check for deep equality of the lists
+    assert len(actual_rates) == len(expect_service_input)
+    for actual_rate, expected_rate in zip(actual_rates, expect_service_input):
+        assert actual_rate.days_of_week == expected_rate.days_of_week
+        assert actual_rate.period.start == expected_rate.period.start
+        assert actual_rate.period.end == expected_rate.period.end
+        assert actual_rate.timezone == expected_rate.timezone
+        assert actual_rate.price == expected_rate.price
+
+
 @patch('libs.rates.price_service.PriceService.get_price')
 def test_prices(mock_get_price, test_client):
     mock_get_price.return_value = 1500
@@ -163,7 +199,20 @@ def test_prices_equal_to_0_if_null(mock_get_price, test_client):
                     }
                 ]
             },
-            "Invalid value for 'days'"
+            "Invalid value for 'days'. Please use the short name of the day. E.g. 'mon,tues'"
+        ),
+        (
+                {
+                    'rates': [
+                        {
+                            'days': [1,2,3],
+                            'times': '0900-2100',
+                            'tz': 'America/Chicago',
+                            'price': 1500
+                        }
+                    ]
+                },
+                "Invalid value for 'days'. Please use the short name of the day. E.g. 'mon,tues'"
         ),
         (
                 {
@@ -215,6 +264,19 @@ def test_prices_equal_to_0_if_null(mock_get_price, test_client):
                     ]
                 },
                 "Times is required"
+        ),
+        (
+                {
+                    'rates': [
+                        {
+                            'days': 'mon',
+                            "times": 900,
+                            'tz': 'America/Chicago',
+                            'price': 1500
+                        }
+                    ]
+                },
+                "Invalid value for 'times'. Must be in format 'HHMM-HHMM'"
         ),
         (
                 {

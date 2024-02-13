@@ -34,7 +34,7 @@ class Rate:
         """
         cls._validate_rate(rate)
         days_list = rate['days'].replace(" ", "").split(',')
-        days = [days_to_number_mapping[day] for day in days_list]
+        days = list(set([days_to_number_mapping[day] for day in days_list]))
         times = rate['times'].split('-')
         interval = Interval(int(times[0]), int(times[1]))
         return cls(days, interval, rate['tz'], rate['price'])
@@ -75,9 +75,11 @@ class Rate:
         if not rate.get("days"):
             raise ValueError("Days of week are required")
 
+        if not isinstance(rate.get("days"), str):
+            raise ValueError("Invalid value for 'days'. Please use the short name of the day. E.g. 'mon,tues'")
         days = rate.get("days").replace(" ", "").split(",")
         if not all(day in valid_days for day in days):
-            raise ValueError("Invalid value for 'days'")
+            raise ValueError("Invalid value for 'days'. Please use the short name of the day. E.g. 'mon,tues'")
 
         # Validate price
         if not isinstance(rate.get("price"), int):
@@ -85,6 +87,8 @@ class Rate:
 
         # Validate times
         times = rate.get("times")
+        if not times or not isinstance(times, str):
+            raise Exception("Invalid value for 'times'. Must be in format 'HHMM-HHMM'")
         if len(times) != 9 or not times[4] == "-":
             raise Exception("Invalid value for 'times'. Must be in format 'HHMM-HHMM'")
         times = times.split("-")
