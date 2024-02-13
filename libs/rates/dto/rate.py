@@ -33,7 +33,8 @@ class Rate:
         Rate: Rate object created from the input dictionary.
         """
         cls._validate_rate(rate)
-        days = [days_to_number_mapping[day] for day in rate['days'].split(',')]
+        days_list = rate['days'].replace(" ", "").split(',')
+        days = [days_to_number_mapping[day] for day in days_list]
         times = rate['times'].split('-')
         interval = Interval(int(times[0]), int(times[1]))
         return cls(days, interval, rate['tz'], rate['price'])
@@ -68,7 +69,7 @@ class Rate:
             raise Exception("Price is required")
 
         valid_days = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"]
-        days = rate.get("days").split(",")
+        days = rate.get("days").replace(" ", "").split(",")
         if not all(day in valid_days for day in days):
             raise ValueError("Invalid value for 'days'")
 

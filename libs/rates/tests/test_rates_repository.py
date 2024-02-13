@@ -55,6 +55,24 @@ def test_find_rate(rates_repository):
     assert found_rates == [rate_1]
 
 
+def test_find_rate_is_none_if_start_if_eq_end_of_rate_interval(rates_repository):
+    # Prepare
+    day_of_week = 1
+    interval = Interval(1600, 1700)
+    timezone = "America/New_York"
+
+    rate_1 = rate_factory.create(days_of_week=[1, 2, 3], period=Interval(900, 1600), timezone=timezone)
+    rate_2 = rate_factory.create(days_of_week=[0, 5, 6], period=Interval(900, 1600))
+
+    rates_repository.update_rates([rate_1, rate_2])
+
+    # Execute
+    found_rates = rates_repository.find_rate(day_of_week, interval, get_timezone_offset(timezone))
+
+    # Assert
+    assert found_rates == []
+
+
 def test_find_no_matching_timezone_rate(rates_repository):
     # Prepare
     day_of_week = 1

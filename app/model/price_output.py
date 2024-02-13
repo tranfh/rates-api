@@ -3,4 +3,4 @@ class PriceOutput:
         self.price = price
 
     def to_json(self):
-        return {"price": self.price}
+        return {"price": self.price if self.price else 0}

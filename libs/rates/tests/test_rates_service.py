@@ -23,6 +23,27 @@ def test_update_rates(rates_service):
     # Expect
     assert updated_rates == rates_to_update
 
+
+def test_update_rates_with_empty_list(rates_service):
+    # Prepare
+    rates_repository.update_rates.return_value = []
+
+    # Run
+    updated_rates = rates_service.update_rates([])
+
+    # Expect
+    assert updated_rates == []
+
+
+def test_update_rates_with_invalid_list(rates_service):
+    # Prepare
+    rate = rate_factory.create()
+
+    # Run
+    with pytest.raises(Exception):
+        rates_service.update_rates([rate, 'a', 1, None, {}])
+
+
 def test_get_rates(rates_service):
     # Prepare
     rates_from_repository = rate_factory.create_list(2)
@@ -34,6 +55,7 @@ def test_get_rates(rates_service):
 
     # Expect
     assert rates == rates_from_repository
+
 
 def test_get_none_if_rates_doesnt_exist(rates_service):
     # Prepare

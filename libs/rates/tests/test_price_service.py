@@ -30,6 +30,32 @@ def test_get_price_valid_interval(price_service):
     assert price == rate.get_price()
 
 
+def test_get_price_with_end_before_start(price_service):
+    # Prepare
+    start = datetime(2024, 2, 12, 10, 0)
+    end = datetime(2024, 2, 12, 12, 0)
+
+    # Run
+    rate = rate_factory.create(period=Interval(900, 1600))
+    rates_repository.find_rate.return_value = [rate]
+
+    # Expect
+    with pytest.raises(ValueError):
+        price_service.get_price(end, start)
+
+
+def test_get_price_with_invalid_interval_input(price_service):
+    # Prepare
+    start = str(datetime(2024, 2, 12, 10, 0))
+    end = str(datetime(2024, 2, 12, 12, 0))
+
+    # Run
+
+    # Expect
+    with pytest.raises(AttributeError):
+        price_service.get_price(start, end)
+
+
 def test_get_price_empty_result(price_service):
     # Mock data
     start = datetime(2024, 2, 12, 10, 0)
@@ -42,7 +68,7 @@ def test_get_price_empty_result(price_service):
     price = price_service.get_price(start, end)
 
     # Expect
-    assert price is None  # Or any other appropriate response
+    assert price is None
 
 
 def test_get_price_multiple_rates_error(price_service):
@@ -60,6 +86,7 @@ def test_get_price_multiple_rates_error(price_service):
     # Expect
     assert price == 'unavailable'
 
+
 def test_get_price_multiple_days_input_error(price_service):
     # Mock data
     start = datetime(2024, 2, 12, 10, 0)
@@ -71,11 +98,3 @@ def test_get_price_multiple_days_input_error(price_service):
     # Expect
     assert price == 'unavailable'
 
-def test_get_price_invalid_interval(price_service):
-    # Mock data
-    start = datetime(2024, 2, 12, 10, 0)
-    end = datetime(2024, 2, 12, 8, 0)  # End time before start time
-
-    # Call get_price
-    with pytest.raises(ValueError):
-        price_service.get_price(start, end)

@@ -172,6 +172,15 @@ python -m app.app
     "price": 4500
 }
 ```
+
+If the input datetime range spans more than one day, or the input datetime overlaps multiple rates the API must return:
+```
+{
+    "price": "unavailable"
+}
+```
+
+
 ---
 ### Testing
 To run the tests, execute the following command:
