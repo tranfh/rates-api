@@ -13,7 +13,7 @@ Code within the `app` folder is responsible for handling the API requests and re
 
 Code within the `libs` folder is responsible for handling the business logic.
 
-Within the `libs` folder there are two subfolders:
+Within the `libs` folder there are two sub-folders:
 - rates: Contains the code to handle the rates data
   - dto: Contains the code to handle the data models
   - services: Contains the code to handle the business logic
@@ -21,15 +21,47 @@ Within the `libs` folder there are two subfolders:
 - utils: Contains the code to handle any helper functions
 
 ### Installation
-To install the required dependencies, run the following command:
+Open up a directory in which you would like to clone the repository and run the following command:
+```
+git clone git@github.com:tranfh/rates-api.git
+```
 
+Download and install Python 3.8 or higher from the [official website](https://www.python.org/downloads/).
+Manage your Python virtual environments with [venv](https://docs.python.org/3/library/venv.html).
+To install pyenv, run the following command:
 
-`pip install -r requirements.txt`
-
-### Usage
-To run the app locally, execute the following command:
+macOS:
+```
+brew install pyenv
+```
+Linux:
+```
+curl https://pyenv.run | bash
+```
+Windows:
+```
+choco install pyenv-win
+```
+\
+Navigate to the `RatesApi` directory and create a virtual environment by running the following command:
 ```
 cd RatesApi
+python -m venv venv
+```
+
+Activate the virtual environment by running the following command:
+```
+source venv/bin/activate
+```
+
+Install the required packages by running the following command:
+```
+pip install -r requirements.txt
+```
+
+### Usage
+To run the app locally, execute the following command while inside the RatesApi directory:
+```
 python -m app.app
 ```
 
@@ -37,7 +69,7 @@ python -m app.app
 #### 1. Home
 **URL**: /\
 **Method**: GET\
-**Description**: Displays a simple greeting message.\
+**Description**: Displays a simple UI containing the API details.\
 **Example**: http://127.0.0.1:5000/
 
 #### 2. Get Rates
@@ -69,4 +101,4 @@ python -m pytest
 ```
 
 ### Troubleshooting
-If you encounter any issues, and you get an access denied, navigate to [chrome://net-internals/#sockets]() and click "Flush socket pools" to clear the DNS cache.
+If you encounter any issues, and you get access denied, navigate to [chrome://net-internals/#sockets]() and click "Flush socket pools" to clear the DNS cache.

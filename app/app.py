@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 from flask import Flask, request, jsonify, g, render_template
@@ -13,13 +14,15 @@ rate_repository = RatesRepository()
 price_service = PriceService(rates_repository=rate_repository)
 rate_service = RatesService(rates_repository=rate_repository)
 
+# Set up logging
+application.logger.setLevel(logging.INFO)
+
 
 @application.route('/')
 def home():
     return render_template('index.html')
 
 
-# Register the ingestion process to run before the first request
 @application.before_request
 def before_first_request():
     """
@@ -34,13 +37,13 @@ def run_ingestion_process():
     """
     Runs the ingestion process to update rates from a JSON file.
     """
-    print("Ingestion process running...")
+    application.logger.info("Ingestion process running")
 
     static_folder = application.static_folder
     file_path = os.path.join(static_folder, 'rates.json')
 
     if not os.path.exists(file_path):
-        print("File not found.")
+        application.logger.warning("File not found. Could not ingest rates.")
         return
 
     # Read and parse the JSON data from the file
@@ -55,15 +58,15 @@ def run_ingestion_process():
             # Update rates using the rate_service
             rate_service.update_rates(rates_list)
 
-            print("Rates updated successfully.")
+            application.logger.info("Rates updated successfully.")
         except json.JSONDecodeError as e:
-            print("Error decoding JSON:", e)
+            application.logger.error("Error decoding JSON:", e)
         except Exception as e:
-            print("Error occurred while ingesting rates:", e)
+            application.logger.error("Error occurred while ingesting rates:", e)
         finally:
             file.close()
 
-    print("Ingestion process finished.")
+    application.logger.info("Ingestion process finished.")
 
 
 @application.route('/rates', methods=['GET', 'PUT'])
@@ -78,11 +81,13 @@ def rates():
      JSON response with rates or error message.
      """
     if request.method == 'GET':
+        application.logger.info("Fetching all rates...")
         rates_list = rate_service.get_rates()
         result = [RateOutput.from_model(rate).to_json() for rate in rates_list]
         return jsonify({"rates": result})
 
     elif request.method == 'PUT':
+        application.logger.warning("Overwriting existing rates with new rates...")
         try:
             # Convert rates to model objects using map
             rates_input = [Rate.to_model(rate) for rate in request.json.get('rates', [])]
@@ -93,10 +98,13 @@ def rates():
 
             return jsonify({"rates": result})
         except ValueError as e:
+            application.logger.error("Error updating rates:", e)
             return jsonify({'error': str(e)}), 400
         except Exception as e:
+            application.logger.error("Error updating rates:", e)
             return jsonify({'error': str(e)}), 400
     else:
+        application.logger.error("Method not allowed.")
         return 'Method not allowed', 405
 
 
@@ -116,6 +124,8 @@ def prices():
     start_date = request.args.get('start', '')
     end_date = request.args.get('end', '')
 
+    application.logger.info(f"Fetching price for start: {start_date} and end: {end_date}")
+
     # Validate start and end dates
     if not start_date or not end_date:
         return jsonify({'error': 'Start and end date times are required'}), 400
@@ -132,9 +142,9 @@ def prices():
         return PriceOutput(price).to_json()
 
     except ValueError as e:
+        application.logger.error("Error fetching prices:", e)
         return jsonify({'error': str(e)}), 400
 
 
 if __name__ == '__main__':
-    application.run(port=8000, debug=True)
-
+    application.run(port=5000)

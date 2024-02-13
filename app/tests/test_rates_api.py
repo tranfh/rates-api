@@ -5,7 +5,6 @@ from app import application
 from libs.rates.dto import Rate
 
 
-
 @pytest.fixture
 def test_client():
     application.config['TESTING'] = True
@@ -94,8 +93,6 @@ def test_prices(mock_get_price, test_client):
     assert data['price'] == 1500
 
 
-
-@patch('libs.rates.rates_service.RatesService.update_rates')
 @pytest.mark.parametrize(
     "input_data, expected_error",
     [
@@ -218,7 +215,7 @@ def test_prices(mock_get_price, test_client):
         )
     ]
 )
-def test_put_rates_throws_error(mock_update_rates, test_client, input_data, expected_error):
+def test_put_rates_throws_error(test_client, input_data, expected_error):
     response = test_client.put('/rates', json=input_data)
     assert response.status_code == 400
     data = response.json
