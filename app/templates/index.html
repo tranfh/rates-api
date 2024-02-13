@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rates API with Flask</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+
+        .endpoint {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            max-width: 800px;
+            width: 100%;
+            text-align: start;
+        }
+
+        .endpoint-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .inner-endpoint {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding:10px;
+            border-radius: 5px;
+            max-width: 700px;
+            width: 100%;
+            text-align: start;
+        }
+
+        .endpoint h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rates API with Flask</h1>
+
+        <div class="endpoint">
+            <h2>Description</h2>
+            <p>This app is a simple Flask API that provides endpoints to retrieve and update rates. It also provides an endpoint to retrieve the price for a specific time range.</p>
+        </div>
+
+        <div class="endpoint">
+            <h2>Installation</h2>
+            <p>To install the required dependencies, run the following command:</p>
+            <code>pip install -r requirements.txt</code>
+        </div>
+
+        <div class="endpoint">
+            <h2>Usage</h2>
+            <p>To run the app locally, execute the following command:</p>
+            <pre><code>cd RatesApi<br>python -m app.app</code></pre>
+        </div>
+
+        <div class="endpoint endpoint-container">
+            <h2>API Endpoints</h2>
+
+            <div class="inner-endpoint">
+                <h3>1. Home</h3>
+                <p><strong>URL:</strong> /</p>
+                <p><strong>Method:</strong> GET</p>
+                <p><strong>Description:</strong> Displays a simple greeting message.</p>
+                <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/">http://127.0.0.1:5000/</a></p>
+            </div>
+
+            <div class="inner-endpoint">
+                <h3>2. Get Rates</h3>
+                <p><strong>URL:</strong> /rates</p>
+                <p><strong>Method:</strong> GET</p>
+                <p><strong>Description:</strong> Retrieves a list of rates.</p>
+                <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/rates">http://127.0.0.1:5000/rates</a></p>
+            </div>
+
+            <div class="inner-endpoint">
+                <h3>3. Update Rates</h3>
+                <p><strong>URL:</strong> /rates</p>
+                <p><strong>Method:</strong> PUT</p>
+                <p><strong>Description:</strong> Updates the rates with new data.</p>
+                <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/rates">http://127.0.0.1:5000/rates</a></p>
+            </div>
+
+            <div class="inner-endpoint">
+                <h3>4. Get Prices</h3>
+                <p><strong>URL:</strong> /prices</p>
+                <p><strong>Method:</strong> GET</p>
+                <p><strong>Description:</strong> Retrieves the price for a specific time range.</p>
+                <p><strong>Parameters:</strong></p>
+                <ul>
+                    <li><strong>start:</strong> Start date and time (ISO 8601 format)</li>
+                    <li><strong>end:</strong> End date and time (ISO 8601 format)</li>
+                </ul>
+                <p><strong>Example:</strong> <a href="http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00">http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
