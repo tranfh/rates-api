@@ -3,6 +3,23 @@
 ### Description
 This app is a simple Flask API that provides endpoints to retrieve and update rates. It also provides an endpoint to retrieve the price for a specific time range.
 
+This folder structure has been divided into app and libs folders. 
+
+The app folder contains the main application code, while the libs folder contains the helper functions and classes.
+
+The purpose of this structure is to ensure that the code is modular and easy to maintain.
+
+Code within the `app` folder is responsible for handling the API requests and responses.
+
+Code within the `libs` folder is responsible for handling the business logic.
+
+Within the `libs` folder there are two subfolders:
+- rates: Contains the code to handle the rates data
+  - dto: Contains the code to handle the data models
+  - services: Contains the code to handle the business logic
+  - repository: Contains the code to handle database interactions
+- utils: Contains the code to handle any helper functions
+
 ### Installation
 To install the required dependencies, run the following command:
 

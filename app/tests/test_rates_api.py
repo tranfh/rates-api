@@ -1,8 +1,9 @@
+import pytest
 from unittest.mock import patch
 
-from libs.rates.dto.rate import Rate
-import pytest
 from app import application
+from libs.rates.dto import Rate
+
 
 
 @pytest.fixture

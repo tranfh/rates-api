@@ -1,17 +1,37 @@
-from libs.rates.dto.interval import Interval
-from libs.rates.dto.days_of_week import days_to_number_mapping, number_to_days_mapping
 import pytz
+from libs.rates.dto import Interval, days_to_number_mapping
 
 
 class Rate:
     def __init__(self, days_of_week: list[int], period: Interval, timezone: str, price: int):
-        self.days_of_week = days_of_week  # List of integers representing days of the week
-        self.timezone = timezone  # String representing the timezone
-        self.price = price  # Integer representing the price
-        self.period = period  # Dictionary representing the period with start hour and end hour
+        """
+        Initialize a Rate object.
+
+        Parameters:
+        - days_of_week (list[int]): List of integers representing days of the week.
+        - period (Interval): Interval object representing the period with start and end hours.
+        - timezone (str): String representing the timezone.
+        - price (int): Integer representing the price.
+
+        Returns:
+        None
+        """
+        self.days_of_week = days_of_week
+        self.timezone = timezone
+        self.price = price
+        self.period = period
 
     @classmethod
-    def to_model(cls, rate):
+    def to_model(cls, rate) -> 'Rate':
+        """
+        Convert a dictionary representing a rate into a Rate object.
+
+        Parameters:
+        - rate (dict): Dictionary containing rate information.
+
+        Returns:
+        Rate: Rate object created from the input dictionary.
+        """
         cls._validate_rate(rate)
         days = [days_to_number_mapping[day] for day in rate['days'].split(',')]
         times = rate['times'].split('-')
@@ -19,10 +39,25 @@ class Rate:
         return cls(days, interval, rate['tz'], rate['price'])
 
     def get_price(self):
+        """
+        Get the price of the rate.
+
+        Returns:
+        int: The price of the rate.
+        """
         return self.price
 
     @classmethod
     def _validate_rate(cls, rate):
+        """
+        Validate the rate dictionary.
+
+        Parameters:
+        - rate (dict): Dictionary containing rate information.
+
+        Returns:
+        None
+        """
         if not rate.get('days'):
             raise Exception("Days of week are required")
         if not rate.get('times'):

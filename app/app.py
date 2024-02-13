@@ -3,9 +3,9 @@ import os
 
 from flask import Flask, request, jsonify, g, render_template
 
-from app.model.price_output import PriceOutput
-from app.model.rate_output import RateOutput
-from libs.rates import RatesService, PriceService, RatesRepository, Rate
+from app.model import PriceOutput, RateOutput
+from libs.rates.dto import Rate
+from libs.rates import RatesService, PriceService, RatesRepository
 from libs.utils.datetime_helper import isodate_to_datetime
 
 application = Flask(__name__)
@@ -22,13 +22,20 @@ def home():
 # Register the ingestion process to run before the first request
 @application.before_request
 def before_first_request():
+    """
+    Runs the ingestion process before the first request if not already completed.
+    """
     if not g.get('ingestion_completed', False):
         run_ingestion_process()
         g.ingestion_completed = True
 
 
 def run_ingestion_process():
+    """
+    Runs the ingestion process to update rates from a JSON file.
+    """
     print("Ingestion process running...")
+
     static_folder = application.static_folder
     file_path = os.path.join(static_folder, 'rates.json')
 
@@ -58,21 +65,31 @@ def run_ingestion_process():
 
     print("Ingestion process finished.")
 
+
 @application.route('/rates', methods=['GET', 'PUT'])
 def rates():
+    """
+     Retrieves or updates rates based on the HTTP request method.
+
+     For GET requests, retrieves a list of rates.
+     For PUT requests, updates the rates with new data.
+
+     Returns:
+     JSON response with rates or error message.
+     """
     if request.method == 'GET':
         rates_list = rate_service.get_rates()
-        result = list(map(lambda rate: RateOutput.from_model(rate).to_json(), rates_list))
+        result = [RateOutput.from_model(rate).to_json() for rate in rates_list]
         return jsonify({"rates": result})
 
     elif request.method == 'PUT':
         try:
             # Convert rates to model objects using map
-            rates_input = list(map(lambda rate: Rate.to_model(rate), request.json.get('rates', [])))
+            rates_input = [Rate.to_model(rate) for rate in request.json.get('rates', [])]
 
             # Update rates and convert them back to model objects using map
             rates_list = rate_service.update_rates(rates_input)
-            result = list(map(lambda rate: RateOutput.from_model(rate).to_json(), rates_list))
+            result = [RateOutput.from_model(rate).to_json() for rate in rates_list]
 
             return jsonify({"rates": result})
         except ValueError as e:
@@ -85,18 +102,33 @@ def rates():
 
 @application.route('/prices', methods=['GET'])
 def prices():
+    """
+    Endpoint to retrieve the price for a specific time range.
+
+    Retrieves start and end dates from query parameters, validates them,
+    and calculates the price using the PriceService. Returns the price
+    in JSON format.
+
+    Returns:
+        JSON response containing the price or an error message.
+    """
     # Get start and end dates from query parameters
-    start_date = request.args.get('start')
-    end_date = request.args.get('end')
+    start_date = request.args.get('start', '')
+    end_date = request.args.get('end', '')
 
     # Validate start and end dates
     if not start_date or not end_date:
         return jsonify({'error': 'Start and end date times are required'}), 400
 
     try:
+        # Convert start and end dates to datetime objects
         start = isodate_to_datetime(start_date)
         end = isodate_to_datetime(end_date)
+
+        # Get the price for the specified time range
         price = price_service.get_price(start, end)
+
+        # Return the price in JSON format
         return PriceOutput(price).to_json()
 
     except ValueError as e:
@@ -104,5 +136,5 @@ def prices():
 
 
 if __name__ == '__main__':
-    application.run(port=5000, debug=True)
+    application.run(port=8000, debug=True)
 

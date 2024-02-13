@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 from libs.rates import RatesRepository, Rate
 from libs.rates.dto.interval import Interval
 from libs.rates.tests.rate_factory import RateFactory
+from libs.utils.datetime_helper import get_timezone_offset
 
 rate_factory = RateFactory()
 
@@ -10,6 +11,7 @@ rate_factory = RateFactory()
 @pytest.fixture
 def rates_repository():
     return RatesRepository()
+
 
 def test_update_rates(rates_repository):
     # Prepare
@@ -41,30 +43,49 @@ def test_find_rate(rates_repository):
     interval = Interval(900, 1600)
     timezone = "America/New_York"
 
-    rate_1 = rate_factory.create(days_of_week=[1, 2, 3], period=Interval(900, 1600))
+    rate_1 = rate_factory.create(days_of_week=[1, 2, 3], period=Interval(900, 1600), timezone=timezone)
     rate_2 = rate_factory.create(days_of_week=[0, 5, 6], period=Interval(900, 1600))
 
     rates_repository.update_rates([rate_1, rate_2])
 
     # Execute
-    found_rates = rates_repository.find_rate(day_of_week, interval, timezone)
+    found_rates = rates_repository.find_rate(day_of_week, interval, get_timezone_offset(timezone))
 
     # Assert
     assert found_rates == [rate_1]
 
-def test_find__multiple_rates(rates_repository):
+
+def test_find_no_matching_timezone_rate(rates_repository):
     # Prepare
     day_of_week = 1
     interval = Interval(900, 1600)
     timezone = "America/New_York"
 
-    rate_1 = rate_factory.create(days_of_week=[1, 2, 3], period=Interval(900, 1600))
-    rate_2 = rate_factory.create(days_of_week=[1, 5, 6], period=Interval(900, 1600))
+    rate_1 = rate_factory.create(days_of_week=[1, 2, 3], period=Interval(900, 1600), timezone="America/Chicago")
+    rate_2 = rate_factory.create(days_of_week=[0, 5, 6], period=Interval(900, 1600), timezone="America/Toronto")
 
     rates_repository.update_rates([rate_1, rate_2])
 
     # Execute
-    found_rates = rates_repository.find_rate(day_of_week, interval, timezone)
+    found_rates = rates_repository.find_rate(day_of_week, interval, get_timezone_offset(timezone))
+
+    # Assert
+    assert found_rates == []
+
+
+def test_find_multiple_rates(rates_repository):
+    # Prepare
+    day_of_week = 1
+    interval = Interval(900, 1600)
+    timezone = "America/New_York"
+
+    rate_1 = rate_factory.create(days_of_week=[1, 2, 3], period=Interval(900, 1600), timezone=timezone)
+    rate_2 = rate_factory.create(days_of_week=[1, 5, 6], period=Interval(900, 1600), timezone=timezone)
+
+    rates_repository.update_rates([rate_1, rate_2])
+
+    # Execute
+    found_rates = rates_repository.find_rate(day_of_week, interval, get_timezone_offset(timezone))
 
     # Assert
     assert found_rates == [rate_1, rate_2]
