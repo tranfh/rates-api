@@ -9,6 +9,8 @@ from libs.rates.dto import Rate
 from libs.rates import RatesService, PriceService, RatesRepository
 from libs.utils.datetime_helper import isodate_to_datetime
 
+ingestion_completed = False
+
 application = Flask(__name__)
 rate_repository = RatesRepository()
 price_service = PriceService(rates_repository=rate_repository)
@@ -16,6 +18,7 @@ rate_service = RatesService(rates_repository=rate_repository)
 
 # Set up logging
 application.logger.setLevel(logging.DEBUG)
+
 
 
 @application.route('/')
@@ -28,12 +31,13 @@ def before_first_request():
     """
     Runs the ingestion process before the first request if not already completed.
     """
-    if not g.get('ingestion_completed', False):
-        run_ingestion_process()
-        g.ingestion_completed = True
+    global ingestion_completed
+    if not ingestion_completed:
+        ingest_rates()
+        ingestion_completed = True
 
 
-def run_ingestion_process():
+def ingest_rates():
     """
     Runs the ingestion process to update rates from a JSON file.
     """
@@ -103,10 +107,10 @@ def rates():
 
             return jsonify({"rates": result})
         except ValueError as e:
-            application.logger.error("Error updating rates:", e)
+            application.logger.error("Error updating rates: %s", e)
             return jsonify({'error': str(e)}), 400
         except Exception as e:
-            application.logger.error("Error updating rates:", e)
+            application.logger.error("Error updating rates: %s", e)
             return jsonify({'error': str(e)}), 400
     else:
         application.logger.error("Method not allowed.")

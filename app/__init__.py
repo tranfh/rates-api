@@ -1,4 +1,5 @@
 # __init__.py
+from flask import Flask
 
 from .app import application
 from .model.rate_output import RateOutput

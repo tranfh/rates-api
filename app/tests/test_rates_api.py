@@ -12,11 +12,6 @@ def test_client():
         yield client
 
 
-def test_home(test_client):
-    response = test_client.get('/')
-    assert response.status_code == 200
-
-
 @patch('libs.rates.rates_service.RatesService.update_rates')
 def test_before_first_request(mock_update_rates, test_client, monkeypatch):
     # Mocking the existence of the rates.json file
@@ -25,6 +20,11 @@ def test_before_first_request(mock_update_rates, test_client, monkeypatch):
     response = test_client.get('/')
     assert response.status_code == 200
     mock_update_rates.assert_called_once()
+
+
+def test_home(test_client):
+    response = test_client.get('/')
+    assert response.status_code == 200
 
 
 @patch('libs.rates.rates_service.RatesService.get_rates')
