@@ -104,6 +104,18 @@ To run the app locally, execute the following command while inside the RatesApi 
 python -m app.app
 ```
 
+Navigate to http://127.0.0.1:5000/ in your web browser to view the API documentation.
+
+On the right hand side you can interact with the API endpoints directly.
+
+Click on the request button to change the request method type.
+
+Change the url accordingly (rates or prices) and click on `Submit` to execute the request.
+
+For the PUT rates request you can update the rates by clicking on the `Body` textarea and inputting the new rates in the JSON format.
+
+![img.png](img.png)
+
 ### API Endpoints
 #### 1. Home
 **URL**: /\
