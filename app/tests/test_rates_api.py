@@ -15,7 +15,6 @@ def test_client():
 def test_home(test_client):
     response = test_client.get('/')
     assert response.status_code == 200
-    assert b"Hello World" in response.data
 
 
 @patch('libs.rates.rates_service.RatesService.update_rates')

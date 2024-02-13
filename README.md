@@ -43,3 +43,13 @@ python -m app.app
 **start**: Start date and time (ISO 8601 format) \
 **end**: End date and time (ISO 8601 format) \
 Example: http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00
+
+### Testing
+To run the tests, execute the following command:
+```
+cd RatesApi
+python -m pytest 
+```
+
+### Troubleshooting
+If you encounter any issues, and you get an access denied, navigate to [chrome://net-internals/#sockets]() and click "Flush socket pools" to clear the DNS cache.

@@ -1,8 +1,6 @@
 import pytest
 from unittest.mock import MagicMock
 from libs.rates import RatesRepository, RatesService
-from libs.rates.dto.interval import Interval
-from libs.rates.dto.rate import Rate
 from libs.rates.tests.rate_factory import RateFactory
 
 # Mock RatesRepository

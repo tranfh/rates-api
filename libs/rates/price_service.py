@@ -22,6 +22,7 @@ class PriceService:
 
             interval = Interval(int(start_hour_str + start_minute_str),int(end_hour_str + end_minute_str))
 
+            # TODO: manage timezone in search
             timezone = start.tzname()
             rates = self.rate_repository.find_rate(day_of_week, interval, timezone)
 
