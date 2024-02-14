@@ -3,6 +3,7 @@ from typing import Optional
 
 from libs.rates import RatesRepository
 from libs.rates.dto import Interval
+from libs.utils.datetime_helper import get_timezone_offset_from_datetime
 from libs.utils.errors import MultipleDaysInputError, MultipleRatesError
 
 
@@ -26,7 +27,7 @@ class PriceService:
 
             day_of_week = start.weekday()
             interval = self._create_interval(start, end)
-            timezone = self._get_timezone_offset(start)
+            timezone = get_timezone_offset_from_datetime(start)
 
             rates = self.rate_repository.find_rate(day_of_week, interval, timezone)
 
@@ -57,7 +58,6 @@ class PriceService:
         if start.date() != end.date():
             raise MultipleDaysInputError("Start and end times must be on the same day")
 
-
     def _create_interval(self, start: datetime, end: datetime) -> Interval:
         """
         Create an interval object from start and end datetimes.
@@ -75,18 +75,6 @@ class PriceService:
         end_minute_str = f"{end.minute:02d}"
 
         return Interval(int(start_hour_str + start_minute_str), int(end_hour_str + end_minute_str))
-
-    def _get_timezone_offset(self, dt: datetime) -> str:
-        """
-        Get the timezone offset from the datetime object.
-
-        Parameters:
-        - dt (datetime): Datetime object.
-
-        Returns:
-        - str: Timezone offset in the format '±HH:MM'.
-        """
-        return dt.strftime('%z')
 
 
 

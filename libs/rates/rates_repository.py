@@ -1,5 +1,5 @@
 from libs.rates.dto import Interval
-from libs.utils.datetime_helper import get_timezone_offset
+from libs.utils.datetime_helper import get_timezone_offset_from_name
 
 
 class RatesRepository:
@@ -31,12 +31,12 @@ class RatesRepository:
 
         # Iterate through database and find matching rates
         for rate in self.database:
-            if (
-                day_of_week in rate.days_of_week
-                and rate.period.start <= interval.start < rate.period.end
-                and rate.period.start <= interval.end
-                and get_timezone_offset(rate.timezone) == timezone
-            ):
-                rates.append(rate)
+            # Matching weekday and timezone
+            if day_of_week in rate.days_of_week and get_timezone_offset_from_name(rate.timezone) == timezone:
+                # Check if interval overlaps with rate period
+                if (rate.period.start <= interval.start < rate.period.end) or \
+                        (rate.period.start <= interval.end < rate.period.end) or \
+                        (interval.start < rate.period.start and interval.end > rate.period.end):
+                    rates.append(rate)
 
         return rates

@@ -21,8 +21,8 @@ class RatesService:
             list[Rate]: The modified rates after updating.
         """
 
-        if any(not isinstance(rate, Rate) for rate in rates):
-            raise Exception("Invalid rates provided")
+        if not rates or any(not isinstance(rate, Rate) for rate in rates):
+            raise Exception("Invalid rates provided. Please provide a list of Rate objects.")
 
         modified_rates: list[Rate] = self.rates_repository.update_rates(rates)
         return modified_rates

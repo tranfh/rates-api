@@ -183,6 +183,8 @@
                 <p>This app is a simple Flask API that provides endpoints to retrieve and update rates. It also provides
                     an endpoint to retrieve the price for a specific time range.</p>
 
+                <p>For more details refer to the `README.md`</p>
+
                 <p>This folder structure has been divided into app and libs folders.</p>
 
                 <p>The app folder contains the main application code, while the libs folder contains the helper
@@ -212,10 +214,8 @@
                 <p>Download and install Python 3.8 or higher from the [official
                     website](https://www.python.org/downloads/).</p>
                 <p>Manage your Python virtual environments with [venv](https://docs.python.org/3/library/venv.html).</p>
-                <p>Install the required packages by running the following command:</p>
-                <code>pip install -r requirements.txt</code>
 
-                <p>Navigate to the `RatesApi` directory and create a virtual environment by running the following
+                <p>[OPTIONAL] Navigate to the `FOLDER_NAME` directory and create a virtual environment by running the following
                     command:
                 </p>
                 <code>python -m venv venv</code>
@@ -229,7 +229,7 @@
             <div class="vstack text-left border-box">
                 <h2>Usage</h2>
                 <p>To run the app locally, execute the following command:</p>
-                <code>cd RatesApi<br>python -m app.app</code>
+                <code>cd FOLDER_NAME<br>python -m app.app</code>
             </div>
 
             <div class="vstack text-left border-box">
@@ -264,28 +264,34 @@
                         {
                         "rates": [
                         {
-                        "days": "mon,tues,thurs",
+                        "days": "mon,thurs,sun",
                         "times": "0900-2100",
                         "tz": "America/Chicago",
-                        "price": 1400
+                        "price": 9900
+                        },
+                                                {
+                        "days": "tues,fri,sat",
+                        "times": "0900-2100",
+                        "tz": "America/Chicago",
+                        "price": 8900
                         },
                         {
-                        "days": "fri,sat,sun",
+                        "days": "tues,fri,sat",
                         "times": "0900-2100",
                         "tz": "America/Toronto",
-                        "price": 2000
+                        "price": 3000
                         },
                         {
                         "days": "wed",
                         "times": "0600-1800",
-                        "tz": "America/Chicago",
-                        "price": 1750
+                        "tz": "America/New_York",
+                        "price": 2000
                         },
                         {
                         "days": "mon,wed,sat",
                         "times": "0100-0500",
                         "tz": "America/Chicago",
-                        "price": 1000
+                        "price": 1560
                         },
                         {
                         "days": "sun,tues",
@@ -309,7 +315,7 @@
                         <li><strong>end:</strong> End date and time (ISO 8601 format)</li>
                     </ul>
                     <p><strong>Example:</strong> <a
-                            href="http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00">http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00</a>
+                            href="http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-05:00&end=2024-02-12T12:00:00-05:00">http://127.0.0.1:5000/prices?start=2024-02-12T09:05:00-06:00&end=2024-02-12T12:00:00-06:00</a>
                     </p>
                 </div>
             </div>
@@ -318,7 +324,7 @@
                 <h2>Testing</h2>
                 <p>To run the tests, execute the following command:</p>
                 <code>
-                    cd RatesApi
+                    cd <FOLDER_NAME>
                     <br>
                     python -m pytest
                 </code>

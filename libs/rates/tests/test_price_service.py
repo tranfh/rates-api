@@ -86,6 +86,22 @@ def test_get_price_multiple_rates_error(price_service):
     assert price == 'unavailable'
 
 
+def test_get_price_interval_spans_multiple_rates_error(price_service):
+    # Prepare
+    start = datetime(2024, 2, 12, 10, 0)
+    end = datetime(2024, 2, 12, 19, 0)
+
+    rate_a = rate_factory.create(days_of_week=[1, 2, 5], period=Interval(900, 1600))
+    rate_b = rate_factory.create(days_of_week=[1, 3, 6], period=Interval(1700, 2000))
+    rates_repository.find_rate.return_value = [rate_a, rate_b]
+
+    # Run
+    price = price_service.get_price(start, end)
+
+    # Expect
+    assert price == 'unavailable'
+
+
 def test_get_price_multiple_days_input_error(price_service):
     # Mock data
     start = datetime(2024, 2, 12, 10, 0)

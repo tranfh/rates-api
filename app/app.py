@@ -57,7 +57,7 @@ def ingest_rates():
             rates_json = json.load(file)
 
             # Extract rates from JSON data and convert them into Rate objects
-            rates_list = [Rate.to_model(rate) for rate in rates_json.get('rates')]
+            rates_list = [Rate.to_model(rate) for rate in rates_json.get('rates', [])]
 
             # Update rates using the rate_service
             rate_service.update_rates(rates_list)

@@ -25,14 +25,9 @@ def test_update_rates(rates_service):
 
 
 def test_update_rates_with_empty_list(rates_service):
-    # Prepare
-    rates_repository.update_rates.return_value = []
+    with pytest.raises(Exception):
+        rates_service.update_rates([])
 
-    # Run
-    updated_rates = rates_service.update_rates([])
-
-    # Expect
-    assert updated_rates == []
 
 
 def test_update_rates_with_invalid_list(rates_service):

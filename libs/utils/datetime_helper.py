@@ -6,7 +6,20 @@ def isodate_to_datetime(isodate) -> datetime:
     return datetime.strptime(isodate, '%Y-%m-%dT%H:%M:%S%z')
 
 
-def get_timezone_offset(timezone_name):
+def get_timezone_offset_from_datetime(dt: datetime) -> str:
+    """
+    Get the timezone offset from the datetime object.
+
+    Parameters:
+    - dt (datetime): Datetime object.
+
+    Returns:
+    - str: Timezone offset in the format '±HH:MM'.
+    """
+    return dt.strftime('%z')
+
+
+def get_timezone_offset_from_name(timezone_name):
     """
     Get the timezone offset from the given timezone name.
 
