@@ -2,7 +2,7 @@ import json
 import logging
 import os
 
-from flask import Flask, request, jsonify, g, render_template
+from flask import Flask, request, jsonify, render_template
 
 from app.model import PriceOutput, RateOutput
 from libs.rates.dto import Rate

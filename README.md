@@ -7,7 +7,7 @@ This app is a simple Flask API that provides endpoints to retrieve and update ra
 This folder structure has been divided into app and libs folders. 
 
 For the purpose of this project, the database is a simple in-memory database. In a production environment, this would be replaced with a proper database such as PostgreSQL or a NoSQL db.
-
+Docker would be used to containerize the app and the database.
 ---
 ### User Story
 As a user I should be able to fetch and modify rates for a specific datetime range via an API call.
@@ -39,9 +39,13 @@ As a user I should be able to fetch and modify rates for a specific datetime ran
 * The JSON file should contain initial rates
 
 #### Future improvement considerations:
+* Use Sqlalchemy to manage orm models using flask-sqlalchemy
+* Set up a postgres DB using psycopg2 library
+* Create a docker-compose.yml for defining and running multi-container Docker applications
 * Caching
 * Rate Limiting
 * Authentication
+
 
 ---
 
@@ -76,8 +80,7 @@ As a user I should be able to fetch and modify rates for a specific datetime ran
 ## Installation
 Open up a directory in which you would like to clone the repository and run the following command:
 ```
-mkdir <FOLDER_NAME>
-cd <FOLDER_NAME>
+cd rates-api
 git clone git@github.com:tranfh/rates-api.git
 ```
 
@@ -115,9 +118,9 @@ pyenv local 3.11.4
 ```
 
 
-Navigate to the `<FOLDER_NAME>` directory and create a virtual environment by running the following command:
+Navigate to the `rates-api` directory and create a virtual environment by running the following command:
 ```
-cd <FOLDER_NAME>
+cd rates-api
 python -m venv venv
 ```
 
@@ -255,7 +258,7 @@ If the input datetime range spans more than one day, or the input datetime overl
 ### Testing
 To run the tests, execute the following command:
 ```
-cd <FOLDER_NAME>
+cd rates-api
 python -m pytest 
 ```
 ---
