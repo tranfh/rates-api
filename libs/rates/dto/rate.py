@@ -33,8 +33,8 @@ class Rate:
         Rate: Rate object created from the input dictionary.
         """
         cls._validate_rate(rate)
-        days_list = rate['days'].replace(" ", "").split(',')
-        days = list(set([days_to_number_mapping[day] for day in days_list]))
+        days_list: list[str] = rate['days'].replace(" ", "").split(',')
+        days = list(set([days_to_number_mapping[day.lower()] for day in days_list]))
         times = rate['times'].split('-')
         interval = Interval(int(times[0]), int(times[1]))
         return cls(days, interval, rate['tz'], rate['price'])
@@ -61,9 +61,13 @@ class Rate:
         """
         # Check for required fields
         required_fields = ['days', 'times', 'tz', 'price']
+        seen_properties = set()
         for field in required_fields:
             if field not in rate:
                 raise ValueError(f"{field.capitalize()} is required")
+            if field in seen_properties:
+                raise ValueError(f"Duplicate property found: {field}")
+            seen_properties.add(field)
 
         # Check for unknown fields
         unknown_properties = set(rate.keys()) - set(required_fields)
@@ -72,18 +76,23 @@ class Rate:
 
         # Validate days
         valid_days = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"]
-        if not rate.get("days"):
-            raise ValueError("Days of week are required")
+        days = rate.get("days")
 
-        if not isinstance(rate.get("days"), str):
+        if not days:
+            raise ValueError("Days of week are required")
+        if not isinstance(days, str):
             raise ValueError("Invalid value for 'days'. Please use the short name of the day. E.g. 'mon,tues'")
-        days = rate.get("days").replace(" ", "").split(",")
-        if not all(day in valid_days for day in days):
+        days = days.replace(" ", "").split(",")
+        if not all(day.lower() in valid_days for day in days):
             raise ValueError("Invalid value for 'days'. Please use the short name of the day. E.g. 'mon,tues'")
 
         # Validate price
-        if not isinstance(rate.get("price"), int):
+        price = rate.get("price")
+        if not isinstance(price, int):
             raise Exception("Invalid value for 'price'. Must be an integer")
+
+        if price < 0:
+            raise ValueError("Invalid value for 'price'. Must be a positive integer")
 
         # Validate times
         times = rate.get("times")

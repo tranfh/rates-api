@@ -95,11 +95,11 @@ def rates():
         try:
             # Convert rates to model objects using map
             if isinstance(request.json, str):
-                request_dict = json.loads(request.json)
+                data: dict = json.loads(request.json)
             else:
-                request_dict = request.json
+                data: dict = request.json
 
-            rates_input = [Rate.to_model(rate) for rate in request_dict.get('rates', [])]
+            rates_input = [Rate.to_model(rate) for rate in data.get('rates', [])]
 
             # Update rates and convert them back to model objects using map
             rates_list = rate_service.update_rates(rates_input)
@@ -159,4 +159,4 @@ def prices():
 
 
 if __name__ == '__main__':
-    application.run(port=5000, debug=True)
+    application.run(port=5000)

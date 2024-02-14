@@ -353,6 +353,19 @@ def test_prices_equal_to_0_if_null(mock_get_price, test_client):
                             'days': 'mon',
                             'times': '0900-1200',
                             'tz': 'America/Toronto',
+                            'price': -100
+                        }
+                    ]
+                },
+                "Invalid value for 'price'. Must be a positive integer"
+        ),
+        (
+                {
+                    'rates': [
+                        {
+                            'days': 'mon',
+                            'times': '0900-1200',
+                            'tz': 'America/Toronto',
                         }
                     ]
                 },

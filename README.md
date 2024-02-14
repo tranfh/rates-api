@@ -1,23 +1,12 @@
 ## Rates API with Flask
+https://github.com/tranfh/rates-api
+
 ### Description
 This app is a simple Flask API that provides endpoints to retrieve and update rates. It also provides an endpoint to retrieve the price for a specific time range.
 
 This folder structure has been divided into app and libs folders. 
 
-The app folder contains the main application code, while the libs folder contains the helper functions and classes.
-
-The purpose of this structure is to ensure that the code is modular and easy to maintain.
-
-Code within the `app` folder is responsible for handling the API requests and responses.
-
-Code within the `libs` folder is responsible for handling the business logic.
-
-Within the `libs` folder there are two sub-folders:
-- rates: Contains the code to handle the rates data
-  - dto: Contains the code to handle the data models
-  - services: Contains the code to handle the business logic
-  - repository: Contains the code to handle database interactions
-- utils: Contains the code to handle any helper functions
+For the purpose of this project, the database is a simple in-memory database. In a production environment, this would be replaced with a proper database such as PostgreSQL or a NoSQL db.
 
 ---
 ### User Story
@@ -45,28 +34,54 @@ As a user I should be able to fetch and modify rates for a specific datetime ran
 * Rates will not span multiple days.
 
 #### Application Startup:
-    * Rates should be specified in a JSON file and automatically loaded on application startup.
-    * The format of the JSON file should match the structure that can be submitted to the rates endpoint.
-    * The JSON file should contain initial rates and their respective
-
-#### Documentation:
-* There must be clear documentation explaining how to run the application.
-* API endpoints must be thoroughly documented, including their usage and expected responses.
-
-#### Testing:
-* Unit tests must be in place to ensure the correctness of the application.
-* Automated tests should cover various scenarios including valid and invalid inputs for both endpoints.
-* Tests should be comprehensive to cover edge cases and expected behaviors.
+* Rates should be specified in a JSON file and automatically loaded on application startup.
+* The format of the JSON file should match the structure that can be submitted to the rates endpoint.
+* The JSON file should contain initial rates
 
 ---
+## File Structure
+
+### app
+- app.py: 
+  - Main application file
+  - Contains the Flask app and the routes 
+- models: 
+  - Contains the data models
+  - output object classes are defined here to standardize the response 
+- static: 
+  - Contains the rates.json file
+- templates: 
+  - Contains the HTML file for the UI
+- tests: 
+  - Contains the test files
+---
+### libs
+- rates: 
+  - Contains the code to handle the rates data
+  - dto: 
+    - Contains the code to handle the data models
+  - services: 
+    - Contains the code to handle the business logic
+    - price and rates services are decoupled to their respective use cases
+  - repository: 
+    - Contains the code to handle database interactions
+---
+
 ## Installation
 Open up a directory in which you would like to clone the repository and run the following command:
 ```
+mkdir <FOLDER_NAME>
+cd <FOLDER_NAME>
 git clone git@github.com:tranfh/rates-api.git
 ```
 
 Download and install Python 3.8 or higher from the [official website](https://www.python.org/downloads/).
+
+---
 Manage your Python virtual environments with [venv](https://docs.python.org/3/library/venv.html).
+
+This step is **optional**. If you don't wish to separate your python versions, you can skip this step.
+
 To install pyenv, run the following command:
 
 macOS:
@@ -81,10 +96,22 @@ Windows:
 ```
 choco install pyenv-win
 ```
-\
-Navigate to the `RatesApi` directory and create a virtual environment by running the following command:
+
+
+Install a python version using pyenv:
 ```
-cd RatesApi
+pyenv install 3.11.4
+```
+
+Set the python version for the project:
+```
+pyenv local 3.11.4
+```
+
+
+Navigate to the `<FOLDER_NAME>` directory and create a virtual environment by running the following command:
+```
+cd <FOLDER_NAME>
 python -m venv venv
 ```
 
@@ -93,26 +120,51 @@ Activate the virtual environment by running the following command:
 source venv/bin/activate
 ```
 
-Install the required packages by running the following command:
+---
+
+Once you have python installed, and are in the project directory, install the required packages by running the following command:
 ```
 pip install -r requirements.txt
 ```
+
 ---
+
 ### Usage
 To run the app locally, execute the following command while inside the RatesApi directory:
 ```
 python -m app.app
 ```
 
-Navigate to http://127.0.0.1:5000/ in your web browser to view the API documentation.
+Navigate to http://127.0.0.1:5000/ in your web browser to view the API view.
 
-On the right hand side you can interact with the API endpoints directly.
+Upon loading the application, before the first request is made a JSON file containing rates located at `app/static/rates.json` will be loaded into the database.
+The file must be named `rates.json` and contain the following structure:
+```
+{
+    "rates": [
+        {
+            "days": "mon,tues,wed,thurs,fri",
+            "times": "0600-1800",
+            "price": 1500,
+            "timezone": "America/New_York"
+        },
+        {
+            "days": "sat,sun",
+            "times": "0600-2000",
+            "price": 2000,
+            "timezone": "America/New_York"
+        }
+    ]
+}
+```
 
-Click on the request button to change the request method type.
+On the right hand side of the view you can interact with the API endpoints through the inputs.
 
-Change the url accordingly (rates or prices) and click on `Submit` to execute the request.
+Click on the request button to change the request method type (GET, PUT, POST).
 
-For the PUT rates request you can update the rates by clicking on the `Body` textarea and inputting the new rates in the JSON format.
+Change the url accordingly and click on `Submit` to execute the request.
+
+For the PUT rates request, you can update the rates by clicking on the `Request Body` textarea and providing an array of rates in the JSON format, similar to the `rates.json` file.
 
 ![img.png](img.png)
 
@@ -150,7 +202,7 @@ For the PUT rates request you can update the rates by clicking on the `Body` tex
 **URL**: /rates \
 **Method**: PUT \
 **Description**: Updates the rates with new data, overwriting existing data\
-**Example**: http://127.0.0.1:5000/rates
+**Example**: http://127.0.0.1:5000/rates \
 **Example Request**:
 ```
 {
@@ -197,7 +249,7 @@ If the input datetime range spans more than one day, or the input datetime overl
 ### Testing
 To run the tests, execute the following command:
 ```
-cd RatesApi
+cd <FOLDER_NAME>
 python -m pytest 
 ```
 ---
