@@ -38,7 +38,13 @@ As a user I should be able to fetch and modify rates for a specific datetime ran
 * The format of the JSON file should match the structure that can be submitted to the rates endpoint.
 * The JSON file should contain initial rates
 
+#### Future improvement considerations:
+* Caching
+* Rate Limiting
+* Authentication
+
 ---
+
 ## File Structure
 
 ### app
